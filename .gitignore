@@ -1,0 +1,7 @@
+# Editor generated files
+.vscode
+*.swp
+
+# ignore tags
+tags
+TAGS
