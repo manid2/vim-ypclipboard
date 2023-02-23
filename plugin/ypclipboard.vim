@@ -33,6 +33,7 @@ function! RClipboard(reg)
 	let clip_cmd = YPGetSystemClipboard('r')
 	let clipboard_content = system(clip_cmd)
 	call setreg(a:reg, clipboard_content)
+	exe 'normal! "'.a:reg.'p'
 endfunction
 
 command! -nargs=1 WClipboard
@@ -41,5 +42,6 @@ command! -nargs=1 WClipboard
 command! -nargs=1 RClipboard
 			\ call RClipboard(<args>)
 
-nnoremap <silent> <Leader>y           :WClipboard <C-R>=getreg('"')<cr><cr><cr>
+nnoremap <silent> <Leader>y           :WClipboard <C-R>=getreg('"')<cr><cr>
 nnoremap <silent> <Leader>p           :RClipboard '"'<cr>
+inoremap <silent> <C-\>p              <C-O>:RClipboard '"'<cr>
