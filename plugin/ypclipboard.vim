@@ -1,5 +1,10 @@
 " Yank Paste Clipboard
 " -- vim registers to system clipboard
+function! s:Message(msg)
+	echohl WarningMsg
+	echomsg 'cscope-settings: ' . a:msg
+	echohl None
+endfunction
 
 function! YPGetSystemClipboard(rw)
 	let clip_cmd = ''
@@ -16,8 +21,8 @@ function! YPGetSystemClipboard(rw)
 			let clip_cmd_args .= ' -o'
 		endif
 	else
-		echom "No suitable clipboard command is found in the system 
-					\ install one of xclip, xsel, tmux."
+		call s:Message('No suitable clipboard command is found in '.
+			\ 'the system install one of xclip, xsel, tmux.')
 		return
 	endif
 
@@ -36,12 +41,9 @@ function! RClipboard(reg)
 	exe 'normal! "'.a:reg.'p'
 endfunction
 
-command! -nargs=1 WClipboard
-			\ call WClipboard(<q-args>)
+command! -nargs=1 WClipboard           call WClipboard(<q-args>)
+command! -nargs=1 RClipboard           call RClipboard(<args>)
 
-command! -nargs=1 RClipboard
-			\ call RClipboard(<args>)
-
-nnoremap <silent> <Leader>y           :WClipboard <C-R>=getreg('"')<cr><cr>
-nnoremap <silent> <Leader>p           :RClipboard '"'<cr>
-inoremap <silent> <C-\>p              <C-O>:RClipboard '"'<cr>
+nnoremap <silent> <Leader>y            :WClipboard <C-R>=getreg('"')<cr><cr>
+nnoremap <silent> <Leader>p            :RClipboard '"'<cr>
+inoremap <silent> <C-\>p               <C-O>:RClipboard '"'<cr>
