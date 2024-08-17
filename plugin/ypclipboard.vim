@@ -6,38 +6,47 @@ function! s:Message(msg)
 	echohl None
 endfunction
 
-function! YPGetSystemClipboard(rw)
-	let clip_cmd = ''
-	let clip_cmd_args = ''
+function! s:YPGetSystemClipboard(rw)
+	let l:clip_cmd = ''
+	let l:clip_cmd_args = ''
 
 	" TODO: handle cases where xclip is not available use alternatives
 	" i.e. xsel, tmux, gnu screen
 	if executable('xclip')
-		let clip_cmd = 'xclip'
-		let clip_cmd_args = ' -selection clipboard'
+		let l:clip_cmd = 'xclip'
+		let l:clip_cmd_args = ' -selection clipboard'
 		if a:rw == 'w'
-			let clip_cmd_args .= ' -i'
+			let l:clip_cmd_args .= ' -i'
 		elseif a:rw == 'r'
-			let clip_cmd_args .= ' -o'
+			let l:clip_cmd_args .= ' -o'
 		endif
 	else
 		call s:Message('No suitable clipboard command is found in '.
 			\ 'the system install one of xclip, xsel, tmux.')
-		return
 	endif
 
-	return clip_cmd.clip_cmd_args
+	return l:clip_cmd.l:clip_cmd_args
 endfunction
 
 function! WClipboard(text)
-	let clip_cmd = YPGetSystemClipboard('w')
-	call system(clip_cmd, a:text)
+	let l:clip_cmd = s:YPGetSystemClipboard('w')
+
+	if empty(l:clip_cmd)
+		return
+	endif
+
+	call system(l:clip_cmd, a:text)
 endfunction
 
 function! RClipboard(reg)
-	let clip_cmd = YPGetSystemClipboard('r')
-	let clipboard_content = system(clip_cmd)
-	call setreg(a:reg, clipboard_content)
+	let l:clip_cmd = s:YPGetSystemClipboard('r')
+
+	if empty(l:clip_cmd)
+		return
+	endif
+
+	let l:clipboard_content = system(l:clip_cmd)
+	call setreg(a:reg, l:clipboard_content)
 	exe 'normal! "'.a:reg.'p'
 endfunction
 
